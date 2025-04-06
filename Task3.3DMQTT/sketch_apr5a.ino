@@ -8,8 +8,8 @@ const char* password = "12345678";
 // ====== MQTT broker (secured) ======
 const char* mqtt_server = "w29d812d.ala.eu-central-1.emqxsl.com";
 const int mqtt_port = 8883;
-const char* mqtt_user = "nimesh01";               // Your EMQX username
-const char* mqtt_pass = "123456";  // Your EMQX password
+const char* mqtt_user = "nimesh01";               // EMQX username
+const char* mqtt_pass = "123456";  // EMQX password
 const char* mqtt_topic = "SIT210/wave";
 
 // ====== Hardware pins ======
