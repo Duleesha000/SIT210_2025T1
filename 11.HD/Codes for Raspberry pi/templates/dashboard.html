@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Air Quality Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: #eef2f3;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .data {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        .button-row,
+        .threshold-row {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background-color: #3498db;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        input[type=number] {
+            padding: 8px;
+            width: 100px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌿 Smart Room Air Quality Optimizer Monitor</h1>
+
+        <div class="data">🌡 Temperature: <span id="temp">--</span> °C</div>
+        <div class="data">💧 Humidity: <span id="hum">--</span> %</div>
+        <div class="data">🟢 eCO₂: <span id="eco2">--</span> ppm</div>
+        <div class="data">🧪 TVOC: <span id="tvoc">--</span> ppb</div>
+        <div class="data">🌀 Fan Status: <span id="fan">--</span></div>
+        <div class="data">⚙️ Mode: <span id="mode">--</span></div>
+
+        <div class="button-row">
+            <button onclick="toggleFan()">Toggle Fan</button>
+            <button onclick="resetMode()">Reset to AUTO</button>
+        </div>
+
+        <div class="threshold-row">
+            <label for="thresholdInput">Set Threshold: </label>
+            <input type="number" id="thresholdInput" value="1000">
+            <button onclick="setThreshold()">Set</button>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus() {
+            fetch('/status')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('temp').innerText = data.temperature;
+                    document.getElementById('hum').innerText = data.humidity;
+                    document.getElementById('eco2').innerText = data.eco2;
+                    document.getElementById('tvoc').innerText = data.tvoc;
+                    document.getElementById('fan').innerText = data.fan_status;
+                    document.getElementById('mode').innerText = data.mode;
+                });
+        }
+
+        function toggleFan() {
+            fetch('/toggle', { method: 'POST' }).then(updateStatus);
+        }
+
+        function resetMode() {
+            fetch('/reset', { method: 'POST' }).then(updateStatus);
+        }
+
+        function setThreshold() {
+            const value = document.getElementById('thresholdInput').value;
+            fetch('/threshold', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `value=${value}`
+            }).then(updateStatus);
+        }
+
+        setInterval(updateStatus, 2000);
+        updateStatus();
+    </script>
+</body>
+</html>
